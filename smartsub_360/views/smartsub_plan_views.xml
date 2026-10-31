@@ -77,15 +77,11 @@
         <field name="name">smartsub.plan.search</field>
         <field name="model">smartsub.plan</field>
         <field name="arch" type="xml">
-            <search string="Search Plans">
+            <search>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="product_id"/>
-                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Billing Interval" name="group_by_interval" context="{'group_by': 'billing_interval'}"/>
-                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                </group>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>

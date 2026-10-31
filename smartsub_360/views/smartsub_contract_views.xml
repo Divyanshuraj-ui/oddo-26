@@ -22,7 +22,7 @@
                        decoration-info="state == 'draft'"
                        decoration-success="state == 'active'"
                        decoration-warning="state == 'paused'"
-                       decoration-secondary="state == 'closed'"/>
+                       decoration-muted="state == 'closed'"/>
                 <field name="company_id" groups="base.group_multi_company"/>
             </list>
         </field>
@@ -103,7 +103,7 @@
         </field>
     </record>
 
-    <!-- Subscription Contract Search View -->
+    <!-- Subscription Contract Search View: minimal Odoo 19-compatible definition -->
     <record id="view_smartsub_contract_search" model="ir.ui.view">
         <field name="name">smartsub.contract.search</field>
         <field name="model">smartsub.contract</field>
@@ -116,15 +116,6 @@
                 <filter string="In Progress" name="state_active" domain="[('state', '=', 'active')]"/>
                 <filter string="Paused" name="state_paused" domain="[('state', '=', 'paused')]"/>
                 <filter string="Closed" name="state_closed" domain="[('state', '=', 'closed')]"/>
-                <separator/>
-                <filter string="Needs Invoicing" name="needs_invoicing"
-                        domain="[('state', '=', 'active'), ('next_invoice_date', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
-                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
-                    <filter string="Plan" name="group_by_plan" context="{'group_by': 'plan_id'}"/>
-                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                </group>
             </search>
         </field>
     </record>
