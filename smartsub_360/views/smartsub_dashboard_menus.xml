@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level Command Center Menu (Primary Landing Page) -->
+    <menuitem id="menu_smartsub_command_center"
+              name="Command Center"
+              parent="smartsub_360.menu_smartsub_root"
+              action="action_smartsub_analytics_dashboard"
+              sequence="5"/>
+
+    <!-- Analytics & Intelligence Sub-Menu Section -->
+    <menuitem id="menu_smartsub_analytics"
+              name="Analytics &amp; Reports"
+              parent="smartsub_360.menu_smartsub_root"
+              sequence="20"/>
+
+    <menuitem id="menu_smartsub_revenue_report_action"
+              name="Revenue &amp; Invoicing"
+              parent="menu_smartsub_analytics"
+              action="action_smartsub_revenue_report"
+              sequence="10"/>
+
+    <menuitem id="menu_smartsub_subscription_report_action"
+              name="Subscription Growth &amp; MRR"
+              parent="menu_smartsub_analytics"
+              action="action_smartsub_subscription_report"
+              sequence="20"/>
+</odoo>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Analytical Report List View -->
+    <record id="view_smartsub_subscription_report_list" model="ir.ui.view">
+        <field name="name">smartsub.subscription.report.list</field>
+        <field name="model">smartsub.subscription.report</field>
+        <field name="arch" type="xml">
+            <list string="Subscription Contract Analytics" create="false" edit="false" delete="false">
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="billing_cycle"/>
+                <field name="start_date"/>
+                <field name="next_invoice_date"/>
+                <field name="mrr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="arr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="total_paid" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_outstanding" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'paused'"
+                       decoration-secondary="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Subscription Analytical Report Graph View -->
+    <record id="view_smartsub_subscription_report_graph" model="ir.ui.view">
+        <field name="name">smartsub.subscription.report.graph</field>
+        <field name="model">smartsub.subscription.report</field>
+        <field name="arch" type="xml">
+            <graph string="Subscription Status &amp; MRR Distribution" type="bar" sample="1">
+                <field name="plan_id"/>
+                <field name="mrr" type="measure"/>
+                <field name="contract_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Subscription Analytical Report Pivot View -->
+    <record id="view_smartsub_subscription_report_pivot" model="ir.ui.view">
+        <field name="name">smartsub.subscription.report.pivot</field>
+        <field name="model">smartsub.subscription.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Subscription Portfolio Matrix" sample="1">
+                <field name="plan_id" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="contract_count" type="measure"/>
+                <field name="mrr" type="measure"/>
+                <field name="arr" type="measure"/>
+                <field name="total_paid" type="measure"/>
+                <field name="amount_outstanding" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Subscription Analytical Report Search View -->
+    <record id="view_smartsub_subscription_report_search" model="ir.ui.view">
+        <field name="name">smartsub.subscription.report.search</field>
+        <field name="model">smartsub.subscription.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Subscription Analytics">
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <filter string="Active Contracts" name="filter_active" domain="[('state', '=', 'active')]"/>
+                <filter string="Paused Contracts" name="filter_paused" domain="[('state', '=', 'paused')]"/>
+                <filter string="Closed / Churned" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Plan" name="group_by_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Billing Cycle" name="group_by_billing_cycle" context="{'group_by': 'billing_cycle'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Subscription Analytical Report Action -->
+    <record id="action_smartsub_subscription_report" model="ir.actions.act_window">
+        <field name="name">Subscription Growth &amp; MRR Analytics</field>
+        <field name="res_model">smartsub.subscription.report</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Subscription Portfolio Analytics
+            </p>
+            <p>
+                Analyze subscriber distribution, MRR concentration, and retention across customer cohorts.
+            </p>
+        </field>
+    </record>
+</odoo>

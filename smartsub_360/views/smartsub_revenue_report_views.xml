@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Revenue Report List View -->
+    <record id="view_smartsub_revenue_report_list" model="ir.ui.view">
+        <field name="name">smartsub.revenue.report.list</field>
+        <field name="model">smartsub.revenue.report</field>
+        <field name="arch" type="xml">
+            <list string="Subscription Revenue Analysis" create="false" edit="false" delete="false">
+                <field name="invoice_date"/>
+                <field name="partner_id"/>
+                <field name="contract_id"/>
+                <field name="plan_id"/>
+                <field name="billing_cycle"/>
+                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_collected" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_residual" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="payment_state" widget="badge"
+                       decoration-success="payment_state in ('paid', 'in_payment')"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"/>
+                <field name="move_state" widget="badge"
+                       decoration-success="move_state == 'posted'"
+                       decoration-info="move_state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Revenue Report Graph View -->
+    <record id="view_smartsub_revenue_report_graph" model="ir.ui.view">
+        <field name="name">smartsub.revenue.report.graph</field>
+        <field name="model">smartsub.revenue.report</field>
+        <field name="arch" type="xml">
+            <graph string="Monthly Subscription Revenue Trends" type="bar" sample="1">
+                <field name="invoice_date" interval="month"/>
+                <field name="amount_total" type="measure"/>
+                <field name="amount_collected" type="measure"/>
+                <field name="amount_residual" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Revenue Report Pivot View -->
+    <record id="view_smartsub_revenue_report_pivot" model="ir.ui.view">
+        <field name="name">smartsub.revenue.report.pivot</field>
+        <field name="model">smartsub.revenue.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Subscription Revenue Matrix" sample="1">
+                <field name="plan_id" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="invoice_date" interval="month" type="col"/>
+                <field name="amount_total" type="measure"/>
+                <field name="amount_collected" type="measure"/>
+                <field name="amount_residual" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Revenue Report Search View -->
+    <record id="view_smartsub_revenue_report_search" model="ir.ui.view">
+        <field name="name">smartsub.revenue.report.search</field>
+        <field name="model">smartsub.revenue.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Revenue Analytics">
+                <field name="partner_id"/>
+                <field name="contract_id"/>
+                <field name="plan_id"/>
+                <filter string="Posted Invoices" name="filter_posted" domain="[('move_state', '=', 'posted')]"/>
+                <filter string="Collected (Paid)" name="filter_paid" domain="[('payment_state', 'in', ('paid', 'in_payment'))]"/>
+                <filter string="Unpaid / Overdue" name="filter_unpaid" domain="[('payment_state', 'in', ('not_paid', 'partial'))]"/>
+                <separator/>
+                <filter string="This Month" name="filter_this_month"
+                        domain="[('invoice_date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Plan" name="group_by_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Invoice Month" name="group_by_invoice_month" context="{'group_by': 'invoice_date:month'}"/>
+                    <filter string="Payment Status" name="group_by_payment_state" context="{'group_by': 'payment_state'}"/>
+                    <filter string="Contract Status" name="group_by_contract_state" context="{'group_by': 'contract_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Revenue Report Window Action -->
+    <record id="action_smartsub_revenue_report" model="ir.actions.act_window">
+        <field name="name">Revenue &amp; Invoicing Analytics</field>
+        <field name="res_model">smartsub.revenue.report</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_filter_posted': 1, 'group_by_no_leaf': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Subscription Revenue Analytics
+            </p>
+            <p>
+                Analyze billed revenue, actual cash collections, and unpaid balances across subscription plans and customer segments.
+            </p>
+        </field>
+    </record>
+</odoo>

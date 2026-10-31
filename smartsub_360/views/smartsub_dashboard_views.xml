@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Command Center Analytics Dashboard Form View -->
+    <record id="view_smartsub_analytics_dashboard_form" model="ir.ui.view">
+        <field name="name">smartsub.analytics.dashboard.form</field>
+        <field name="model">smartsub.analytics.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Command Center" create="false" delete="false">
+                <header>
+                    <button name="action_refresh"
+                            string="Refresh Analytics"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-refresh"/>
+                    <button name="action_reset_filters"
+                            string="Reset Filters"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-undo"/>
+                    <button name="action_view_active_contracts"
+                            string="View Active Contracts"
+                            type="object"
+                            class="btn-outline-primary"
+                            icon="fa-file-text-o"/>
+                    <button name="action_view_overdue_invoices"
+                            string="View Overdue Invoices"
+                            type="object"
+                            class="btn-outline-danger"
+                            icon="fa-exclamation-triangle"
+                            invisible="overdue_invoices_count == 0"/>
+                </header>
+                <sheet>
+                    <!-- Filter Controls Bar -->
+                    <div class="card bg-light p-3 mb-4 shadow-sm">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <label for="date_from" string="Period From" class="fw-bold text-muted small"/>
+                                <field name="date_from"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="date_to" string="Period To" class="fw-bold text-muted small"/>
+                                <field name="date_to"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filter_plan_id" string="Subscription Plan" class="fw-bold text-muted small"/>
+                                <field name="filter_plan_id" options="{'no_create': True}"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filter_partner_id" string="Customer" class="fw-bold text-muted small"/>
+                                <field name="filter_partner_id" options="{'no_create': True}"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="filter_state" string="Status" class="fw-bold text-muted small"/>
+                                <field name="filter_state"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+
+                    <!-- KPI Statistics Metric Cards -->
+                    <div class="row g-3 mb-4">
+                        <!-- Card 1: MRR & ARR -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-primary border-4 shadow-sm p-3">
+                                <div class="text-uppercase small fw-bold text-primary mb-1">
+                                    <i class="fa fa-line-chart me-1"/> Monthly Recurring Revenue (MRR)
+                                </div>
+                                <div class="h2 fw-bold text-dark mb-1">
+                                    <field name="mrr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="small text-muted">
+                                    Annual Run-Rate (ARR):
+                                    <span class="fw-bold text-dark">
+                                        <field name="arr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Cash Collection & Invoiced -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-success border-4 shadow-sm p-3">
+                                <div class="text-uppercase small fw-bold text-success mb-1">
+                                    <i class="fa fa-check-circle me-1"/> Cash Collection &amp; Invoiced
+                                </div>
+                                <div class="h2 fw-bold text-dark mb-1">
+                                    <field name="total_revenue" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="small text-muted d-flex justify-content-between">
+                                    <span>Invoiced: <field name="total_invoiced" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                                    <span class="badge bg-success-subtle text-success border border-success">
+                                        <field name="collection_rate"/>% Collected
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Active Subscribers & ARPC -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-info border-4 shadow-sm p-3">
+                                <div class="text-uppercase small fw-bold text-info mb-1">
+                                    <i class="fa fa-users me-1"/> Active Subscriptions &amp; Scale
+                                </div>
+                                <div class="h2 fw-bold text-dark mb-1">
+                                    <field name="active_subscriptions"/>
+                                    <span class="small text-muted fs-6"> active (<field name="total_customers"/> unique clients)</span>
+                                </div>
+                                <div class="small text-muted">
+                                    Avg Revenue / Customer (ARPC):
+                                    <span class="fw-bold text-dark">
+                                        <field name="arpc" widget="monetary" options="{'currency_field': 'currency_id'}"/>/mo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <!-- Card 4: Receivables & Overdue Risk -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-danger border-4 shadow-sm p-3">
+                                <div class="text-uppercase small fw-bold text-danger mb-1">
+                                    <i class="fa fa-exclamation-triangle me-1"/> Overdue &amp; Pending Invoices
+                                </div>
+                                <div class="h2 fw-bold text-danger mb-1">
+                                    <field name="overdue_invoices_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="small text-muted d-flex justify-content-between">
+                                    <span>Overdue Count: <span class="fw-bold text-danger"><field name="overdue_invoices_count"/></span></span>
+                                    <span>Pending Bal: <field name="pending_payments" widget="monetary" options="{'currency_field': 'currency_id'}"/></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: Growth & Churn Cohorts -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-warning border-4 shadow-sm p-3">
+                                <div class="text-uppercase small fw-bold text-warning mb-1">
+                                    <i class="fa fa-user-plus me-1"/> New Acquisition &amp; Churn
+                                </div>
+                                <div class="h2 fw-bold text-dark mb-1">
+                                    +<field name="new_subscriptions"/>
+                                    <span class="small text-muted fs-6"> new in period</span>
+                                </div>
+                                <div class="small text-muted d-flex justify-content-between">
+                                    <span>Closed/Terminated: <span class="fw-bold text-dark"><field name="churned_subscriptions"/></span></span>
+                                    <span class="badge bg-warning-subtle text-warning border border-warning">
+                                        <field name="churn_rate"/>% Churn Rate
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Revenue Leakage Detector -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-start border-dark border-4 shadow-sm p-3 bg-light">
+                                <div class="text-uppercase small fw-bold text-dark mb-1">
+                                    <i class="fa fa-shield me-1"/> Revenue Leakage Exposure
+                                </div>
+                                <div class="h2 fw-bold text-dark mb-1">
+                                    <field name="total_leakage_detected" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                                <div class="small text-muted">
+                                    Upcoming 30d Renewals:
+                                    <span class="badge bg-primary text-white ms-1">
+                                        <field name="upcoming_renewals_count"/> Due
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytical Breakdown Notebook -->
+                    <notebook>
+                        <!-- Tab 1: Monthly Trend -->
+                        <page string="Monthly Revenue &amp; Growth Trends" name="monthly_trends">
+                            <field name="monthly_trend_ids" readonly="1">
+                                <list string="Monthly Trends">
+                                    <field name="month_name" string="Month"/>
+                                    <field name="invoiced_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="collected_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="new_contracts" string="New Subscriptions"/>
+                                    <field name="churned_contracts" string="Churned Subscriptions"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 2: Top Customers -->
+                        <page string="Most Valuable Subscribers" name="top_customers">
+                            <field name="top_customer_ids" readonly="1">
+                                <list string="Top Customers">
+                                    <field name="partner_id"/>
+                                    <field name="contract_count" string="Active Contracts"/>
+                                    <field name="total_paid" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="mrr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 3: Subscription Plans -->
+                        <page string="Revenue by Subscription Plan" name="plan_performance">
+                            <field name="plan_stat_ids" readonly="1">
+                                <list string="Plan Analytics">
+                                    <field name="plan_id"/>
+                                    <field name="subscriber_count"/>
+                                    <field name="total_revenue" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="mrr" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="share_percentage" string="MRR Share (%)"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Tab 4: Revenue Leakage Alerts -->
+                        <page string="Revenue Leakage Detector" name="leakage_alerts">
+                            <div class="alert alert-warning py-2 mb-3" role="alert">
+                                <strong>Intelligent Detection Engine:</strong> Identifies unbilled active cycles, overdue receivables, duplicate billing exposure, and expired promotional discounts without double-counting financial impact.
+                            </div>
+                            <field name="leakage_alert_ids" readonly="1">
+                                <list string="Leakage Alerts"
+                                      decoration-danger="risk_level == 'critical'"
+                                      decoration-warning="risk_level == 'high'"
+                                      decoration-info="risk_level == 'medium'">
+                                    <field name="risk_level" widget="badge"
+                                           decoration-danger="risk_level == 'critical'"
+                                           decoration-warning="risk_level == 'high'"
+                                           decoration-info="risk_level == 'medium'"
+                                           decoration-secondary="risk_level == 'low'"/>
+                                    <field name="issue_type"/>
+                                    <field name="contract_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="financial_impact" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="suggested_action"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Dashboard Window Action -->
+    <record id="action_smartsub_analytics_dashboard" model="ir.actions.server">
+        <field name="name">Subscription Command Center</field>
+        <field name="model_id" ref="model_smartsub_analytics_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.open_dashboard()</field>
+    </record>
+</odoo>
