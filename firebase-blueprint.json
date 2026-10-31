@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "customer": {
+      "title": "Customer",
+      "description": "A business customer account registered in Brightloop",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "companyName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "taxNumber": { "type": "string" },
+        "paymentTerms": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "companyName", "email"]
+    },
+    "subscription": {
+      "title": "Subscription",
+      "description": "A recurring billing subscription contract",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "string" },
+        "customerId": { "type": "string" },
+        "planId": { "type": "string" },
+        "status": { "type": "string" },
+        "startDate": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "nextBillingDate": { "type": "string" },
+        "lastBilledDate": { "type": "string" },
+        "paymentTerms": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "discountTotal": { "type": "number" },
+        "taxTotal": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["number", "customerId", "planId", "status"]
+    },
+    "invoice": {
+      "title": "Invoice",
+      "description": "An issued billing invoice",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "string" },
+        "subscriptionId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "date": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "status": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "taxTotal": { "type": "number" },
+        "discountTotal": { "type": "number" },
+        "grandTotal": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "amountDue": { "type": "number" },
+        "paymentTerms": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["number", "customerId", "grandTotal", "status"]
+    },
+    "payment": {
+      "title": "Payment",
+      "description": "A recorded payment transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "string" },
+        "invoiceId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "amount": { "type": "number" },
+        "method": { "type": "string" },
+        "date": { "type": "string" },
+        "transactionRef": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["number", "invoiceId", "amount", "method"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/customer" },
+      "description": "Collection of customer organizations"
+    },
+    "/subscriptions/{subscriptionId}": {
+      "schema": { "$ref": "#/entities/subscription" },
+      "description": "Collection of subscription contracts"
+    },
+    "/invoices/{invoiceId}": {
+      "schema": { "$ref": "#/entities/invoice" },
+      "description": "Collection of invoices"
+    },
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/payment" },
+      "description": "Collection of recorded payments"
+    }
+  }
+}
