@@ -5,33 +5,46 @@
         <field name="name">SmartSub 360</field>
         <field name="description">Manage subscription contracts, recurring billing, and plans.</field>
         <field name="sequence">25</field>
+        <field name="parent_id" ref="base.module_category_sales"/>
+    </record>
+
+    <!-- Privilege for SmartSub 360 Access Rights -->
+    <record id="res_groups_privilege_smartsub" model="res.groups.privilege">
+        <field name="name">SmartSub 360</field>
+        <field name="description">Subscription contract lifecycle, recurring billing, and plan administration.</field>
+        <field name="sequence">25</field>
+        <field name="category_id" ref="base.module_category_sales"/>
     </record>
 
     <!-- User Group -->
     <record id="group_smartsub_user" model="res.groups">
         <field name="name">User</field>
-        <field name="category_id" ref="module_category_smartsub_360"/>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_smartsub"/>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Regular users can view plans and manage subscription contracts without deletion rights.</field>
     </record>
 
     <!-- Manager / Administrator Group -->
     <record id="group_smartsub_manager" model="res.groups">
         <field name="name">Administrator</field>
-        <field name="category_id" ref="module_category_smartsub_360"/>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_smartsub"/>
         <field name="implied_ids" eval="[(4, ref('group_smartsub_user'))]"/>
-        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Administrators have full CRUD access over plans, contracts, and subscription configuration.</field>
     </record>
 
     <!-- Multi-Company Record Rules -->
     <record id="smartsub_contract_company_rule" model="ir.rule">
         <field name="name">SmartSub Contract Multi-Company</field>
         <field name="model_id" ref="model_smartsub_contract"/>
-        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
     </record>
 
     <record id="smartsub_plan_company_rule" model="ir.rule">
         <field name="name">SmartSub Plan Multi-Company</field>
         <field name="model_id" ref="model_smartsub_plan"/>
-        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="domain_force">[('company_id', 'in', company_ids + [False])]</field>
     </record>
 </odoo>

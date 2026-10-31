@@ -183,11 +183,15 @@ def _prepare_invoice_line_values(self, period_start, period_end):
 
 ---
 
-## 5. Security & Multi-Company Architecture
+## 5. Security & Multi-Company Architecture (Odoo 19)
 
+* **Odoo 19 Privilege & Group Model**:
+  - Privilege: `res_groups_privilege_smartsub` (`res.groups.privilege`) linked to category `base.module_category_sales`.
+  - In Odoo 19, `res.groups` links to `res.groups.privilege` via `privilege_id` (the legacy `category_id` on `res.groups` was deprecated and removed).
+  - Explicit user links use `user_ids` (replacing legacy `users`).
 * **Role Isolation**:
   - `SmartSub 360 / User` (`group_smartsub_user`): Designed for operational sales reps. Can create contracts, adjust customer details, and view plans. **Cannot delete contracts** (`perm_unlink=0`), cannot create/edit plans (`perm_write=0, perm_create=0`).
   - `SmartSub 360 / Administrator` (`group_smartsub_manager`): Full administrative permissions including plan configuration, dunning setup, and contract deletion.
 * **Multi-Company Record Rules**:
   - Contracts and plans are bound to `company_id`.
-  - Multi-company record rules ensure users in multi-company environments only see contracts belonging to allowed companies (`['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]`).
+  - Multi-company record rules ensure users in multi-company environments only see contracts belonging to allowed companies (`[('company_id', 'in', company_ids + [False])]`).
