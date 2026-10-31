@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_smartsub_plan_user,smartsub.plan.user,model_smartsub_plan,smartsub_360.group_smartsub_user,1,0,0,0
+access_smartsub_plan_manager,smartsub.plan.manager,model_smartsub_plan,smartsub_360.group_smartsub_manager,1,1,1,1
+access_smartsub_contract_user,smartsub.contract.user,model_smartsub_contract,smartsub_360.group_smartsub_user,1,1,1,0
+access_smartsub_contract_manager,smartsub.contract.manager,model_smartsub_contract,smartsub_360.group_smartsub_manager,1,1,1,1

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Demo Subscription Service Product -->
+    <record id="demo_product_saas_service" model="product.product">
+        <field name="name">Cloud SaaS Subscription</field>
+        <field name="type">service</field>
+        <field name="is_subscription" eval="True"/>
+        <field name="list_price">49.0</field>
+        <field name="standard_price">10.0</field>
+        <field name="invoice_policy">order</field>
+    </record>
+
+    <!-- Demo Plan: Monthly Standard -->
+    <record id="demo_plan_monthly_standard" model="smartsub.plan">
+        <field name="name">Cloud SaaS - Monthly Standard</field>
+        <field name="code">SAAS-M-STD</field>
+        <field name="billing_interval">monthly</field>
+        <field name="interval_count">1</field>
+        <field name="product_id" ref="demo_product_saas_service"/>
+        <field name="price">49.0</field>
+        <field name="trial_period_days">14</field>
+        <field name="auto_close_unpaid_days">15</field>
+    </record>
+
+    <!-- Demo Plan: Annual Pro -->
+    <record id="demo_plan_annual_pro" model="smartsub.plan">
+        <field name="name">Cloud SaaS - Annual Pro</field>
+        <field name="code">SAAS-Y-PRO</field>
+        <field name="billing_interval">yearly</field>
+        <field name="interval_count">1</field>
+        <field name="product_id" ref="demo_product_saas_service"/>
+        <field name="price">499.0</field>
+        <field name="trial_period_days">30</field>
+        <field name="auto_close_unpaid_days">30</field>
+    </record>
+
+    <!-- Demo Partner -->
+    <record id="demo_partner_subscriber" model="res.partner">
+        <field name="name">Acme Global Technologies</field>
+        <field name="email">billing@acmeglobal.example.com</field>
+        <field name="customer_rank">1</field>
+    </record>
+
+    <!-- Demo Contract -->
+    <record id="demo_contract_acme_standard" model="smartsub.contract">
+        <field name="partner_id" ref="demo_partner_subscriber"/>
+        <field name="plan_id" ref="demo_plan_monthly_standard"/>
+        <field name="recurring_amount">49.0</field>
+        <field name="state">active</field>
+        <field name="start_date" eval="time.strftime('%Y-%m-01')"/>
+        <field name="next_invoice_date" eval="(datetime.date.today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d')"/>
+        <field name="auto_renew" eval="True"/>
+        <field name="description">Standard multi-tenant cloud subscription agreement with 99.9% uptime SLA.</field>
+    </record>
+</odoo>

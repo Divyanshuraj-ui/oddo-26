@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_smartsub_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.smartsub.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='other_info']" position="inside">
+                <group string="Subscription Details" name="smartsub_subscription_group" invisible="not smartsub_contract_id">
+                    <field name="smartsub_contract_id" readonly="1"/>
+                    <field name="smartsub_period_start" readonly="1"/>
+                    <field name="smartsub_period_end" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

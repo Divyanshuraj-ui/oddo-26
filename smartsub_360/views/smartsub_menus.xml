@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Top Menu -->
+    <menuitem id="menu_smartsub_root"
+              name="SmartSub 360"
+              web_icon="smartsub_360,static/description/icon.png"
+              sequence="25"/>
+
+    <!-- Operations Section -->
+    <menuitem id="menu_smartsub_operations"
+              name="Subscriptions"
+              parent="menu_smartsub_root"
+              sequence="10"/>
+
+    <menuitem id="menu_smartsub_contract_action"
+              name="Contracts"
+              parent="menu_smartsub_operations"
+              action="action_smartsub_contract"
+              sequence="10"/>
+
+    <!-- Configuration Section (Admin Only) -->
+    <menuitem id="menu_smartsub_configuration"
+              name="Configuration"
+              parent="menu_smartsub_root"
+              groups="smartsub_360.group_smartsub_manager"
+              sequence="100"/>
+
+    <menuitem id="menu_smartsub_plan_action"
+              name="Plans"
+              parent="menu_smartsub_configuration"
+              action="action_smartsub_plan"
+              sequence="10"/>
+</odoo>

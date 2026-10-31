@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Plan List View -->
+    <record id="view_smartsub_plan_list" model="ir.ui.view">
+        <field name="name">smartsub.plan.list</field>
+        <field name="model">smartsub.plan</field>
+        <field name="arch" type="xml">
+            <list string="Subscription Plans">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="billing_interval"/>
+                <field name="interval_count"/>
+                <field name="product_id"/>
+                <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="contract_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Subscription Plan Form View -->
+    <record id="view_smartsub_plan_form" model="ir.ui.view">
+        <field name="name">smartsub.plan.form</field>
+        <field name="model">smartsub.plan</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Plan">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Plan Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Pro Monthly Plan"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Billing Rules">
+                            <field name="code"/>
+                            <field name="product_id"/>
+                            <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Frequency &amp; Terms">
+                            <field name="billing_interval"/>
+                            <field name="interval_count"/>
+                            <field name="trial_period_days"/>
+                            <field name="auto_close_unpaid_days"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Active Contracts" name="contracts">
+                            <field name="contract_ids" readonly="1">
+                                <list string="Contracts">
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state == 'draft'"
+                                           decoration-success="state == 'active'"
+                                           decoration-warning="state == 'paused'"
+                                           decoration-danger="state == 'closed'"/>
+                                    <field name="start_date"/>
+                                    <field name="next_invoice_date"/>
+                                    <field name="recurring_amount"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Subscription Plan Search View -->
+    <record id="view_smartsub_plan_search" model="ir.ui.view">
+        <field name="name">smartsub.plan.search</field>
+        <field name="model">smartsub.plan</field>
+        <field name="arch" type="xml">
+            <search string="Search Plans">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="product_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Billing Interval" name="group_by_interval" context="{'group_by': 'billing_interval'}"/>
+                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Plans -->
+    <record id="action_smartsub_plan" model="ir.actions.act_window">
+        <field name="name">Subscription Plans</field>
+        <field name="res_model">smartsub.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_smartsub_plan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first subscription plan!
+            </p>
+            <p>
+                Define recurring billing intervals, pricing, and link them to service products.
+            </p>
+        </field>
+    </record>
+</odoo>
