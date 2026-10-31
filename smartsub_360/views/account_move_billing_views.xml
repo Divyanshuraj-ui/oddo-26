@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Invoice Form View Extension: Subscription Overdue Fields -->
+    <record id="view_move_form_smartsub_billing_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.smartsub.billing.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="smartsub_360.view_move_form_smartsub_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='smartsub_subscription_group']" position="inside">
+                <field name="smartsub_is_overdue" readonly="1" invisible="not smartsub_is_overdue"/>
+                <field name="smartsub_overdue_days" readonly="1" invisible="not smartsub_is_overdue"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Contract Form View Extension: Billing & Payment Management -->
+    <record id="view_smartsub_contract_form_billing" model="ir.ui.view">
+        <field name="name">smartsub.contract.form.billing</field>
+        <field name="model">smartsub.contract</field>
+        <field name="inherit_id" ref="smartsub_360.view_smartsub_contract_form"/>
+        <field name="arch" type="xml">
+            <!-- Header button to manually generate next invoice -->
+            <xpath expr="//header" position="inside">
+                <button name="action_generate_recurring_invoice"
+                        string="Generate Next Invoice"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'active'"/>
+            </xpath>
+
+            <!-- Stat buttons for Outstanding & Total Paid -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object" class="oe_stat_button" icon="fa-money" invisible="amount_outstanding == 0.0">
+                    <field name="amount_outstanding" widget="monetary" options="{'currency_field': 'currency_id'}" string="Due Balance"/>
+                </button>
+                <button type="object" class="oe_stat_button" icon="fa-check-circle-o">
+                    <field name="total_paid" widget="monetary" options="{'currency_field': 'currency_id'}" string="Paid Revenue"/>
+                </button>
+            </xpath>
+
+            <!-- Billing Cycle & Discount Configuration -->
+            <xpath expr="//group[@string='Schedule &amp; Terms']" position="after">
+                <group string="Billing Cycle &amp; Discounts">
+                    <field name="billing_cycle"/>
+                    <field name="discount_percentage"/>
+                    <field name="discount_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="last_invoice_date"/>
+                    <label for="next_billing_period_start" string="Next Period Window"/>
+                    <div class="o_row">
+                        <field name="next_billing_period_start" class="oe_inline"/>
+                        <span class="mx-2">to</span>
+                        <field name="next_billing_period_end" class="oe_inline"/>
+                    </div>
+                </group>
+            </xpath>
+
+            <!-- Billing & Payment Health Notebook Page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Billing &amp; Payment Health" name="billing_health">
+                    <group>
+                        <group string="Revenue &amp; Receivables">
+                            <field name="total_invoiced" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="total_paid" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="amount_outstanding" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                        <group string="Payment Recovery Status">
+                            <field name="payment_status" widget="badge"
+                                   decoration-success="payment_status == 'paid'"
+                                   decoration-warning="payment_status == 'partial'"
+                                   decoration-danger="payment_status in ('unpaid', 'overdue')"
+                                   decoration-secondary="payment_status == 'no_invoices'"/>
+                            <field name="overdue_amount" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                   invisible="overdue_amount == 0.0"/>
+                            <field name="overdue_days" invisible="overdue_days == 0"/>
+                            <field name="recovery_status" widget="badge"
+                                   decoration-success="recovery_status == 'normal'"
+                                   decoration-info="recovery_status == 'in_grace'"
+                                   decoration-warning="recovery_status == 'attention'"
+                                   decoration-danger="recovery_status == 'escalated'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Enhance Invoices list inside notebook -->
+            <xpath expr="//field[@name='invoice_ids']/list" position="inside">
+                <field name="invoice_date_due"/>
+                <field name="amount_residual" string="Unpaid Amount"/>
+                <field name="smartsub_overdue_days" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Contract List View Extension: Add Payment Status & Due Balance -->
+    <record id="view_smartsub_contract_list_billing" model="ir.ui.view">
+        <field name="name">smartsub.contract.list.billing</field>
+        <field name="model">smartsub.contract</field>
+        <field name="inherit_id" ref="smartsub_360.view_smartsub_contract_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="amount_outstanding" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                <field name="payment_status" widget="badge"
+                       decoration-success="payment_status == 'paid'"
+                       decoration-warning="payment_status == 'partial'"
+                       decoration-danger="payment_status in ('unpaid', 'overdue')"
+                       decoration-secondary="payment_status == 'no_invoices'"
+                       optional="show"/>
+                <field name="recovery_status" widget="badge"
+                       decoration-success="recovery_status == 'normal'"
+                       decoration-warning="recovery_status in ('in_grace', 'attention')"
+                       decoration-danger="recovery_status == 'escalated'"
+                       optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Contract Search View Extension: Billing & Overdue Filters -->
+    <record id="view_smartsub_contract_search_billing" model="ir.ui.view">
+        <field name="name">smartsub.contract.search.billing</field>
+        <field name="model">smartsub.contract</field>
+        <field name="inherit_id" ref="smartsub_360.view_smartsub_contract_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='needs_invoicing']" position="after">
+                <filter string="Overdue Subscriptions" name="filter_overdue"
+                        domain="[('payment_status', '=', 'overdue')]"/>
+                <filter string="Outstanding Balances" name="filter_outstanding"
+                        domain="[('amount_outstanding', '&gt;', 0.0)]"/>
+            </xpath>
+            <xpath expr="//group/filter[@name='group_by_state']" position="after">
+                <filter string="Payment Status" name="group_by_payment_status" context="{'group_by': 'payment_status'}"/>
+                <filter string="Recovery Status" name="group_by_recovery_status" context="{'group_by': 'recovery_status'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
